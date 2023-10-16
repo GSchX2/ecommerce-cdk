@@ -6,7 +6,7 @@ exports.handler = async function(event) {
     const params = {
         ExpressionAttributeValues: {
             ":pkValue": {
-              S: "products"
+              S: "user#001"
              },
              ":skValue": {
               S: "products#"

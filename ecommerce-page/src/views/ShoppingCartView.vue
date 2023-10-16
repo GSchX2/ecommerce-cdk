@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col mt-5"
                 v-for="cartProduct in cartProducts"
-                v-bind:key="cartProduct.id"
+                v-bind:key="cartProduct.SK"
             >
                 <div class="card" style="width: 18rem;">
                     <img :src="cartProduct.imageSource" class="card-img-top">
@@ -30,9 +30,9 @@ export default {
     },
 
     mounted() {
-        fetch('https://6524af76ea560a22a4ea0098.mockapi.io/api/cart')
+        fetch('https://im5b2hgmqc.execute-api.us-east-1.amazonaws.com/prod/cart')
             .then(response => response.json())
-            .then(res => this.cartProducts = res);
+            .then(res => this.cartProducts = res.products);
     },
 
     methods: {

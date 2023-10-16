@@ -30,14 +30,17 @@ export default {
   },
 
   mounted() {
-    fetch('https://fgvkzh926b.execute-api.us-east-1.amazonaws.com/prod')
+    fetch('https://im5b2hgmqc.execute-api.us-east-1.amazonaws.com/prod/')
       .then(response => response.json())
       .then(res => this.products = res.products);
   },
 
   methods: {
     addItemCart(product) {
-      fetch('https://6524af76ea560a22a4ea0098.mockapi.io/api/cart',
+      product.PK = 'user#001' // change this dinamically 
+
+      console.log(product);
+      fetch('https://im5b2hgmqc.execute-api.us-east-1.amazonaws.com/prod/cart',
         {
           method: 'POST',
           headers: {

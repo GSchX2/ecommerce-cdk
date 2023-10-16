@@ -42,8 +42,8 @@ export class APIStack extends Stack {
     table.addGlobalSecondaryIndex(gsi1);
 
 
-    // defines an AWS Lambda resourse
-    const getAllProductsLambda = new lambda.Function(this, 'getProductHandler', {
+    // defines an AWS Lambda resourse to get products
+    const getAllProductsLambda = new lambda.Function(this, 'getProducstHandler', {
       runtime: lambda.Runtime.NODEJS_16_X,    
       code: lambda.Code.fromAsset('lambda'),  
       handler: 'getAllProducts.handler',   
@@ -52,10 +52,39 @@ export class APIStack extends Stack {
       }             
     });
 
+    // defines an AWS Lambda resourse to get products of the user cart
+    const getUserCartProductsLambda = new lambda.Function(this, 'getUserCartProducstHandler', {
+      runtime: lambda.Runtime.NODEJS_16_X,    
+      code: lambda.Code.fromAsset('lambda'),  
+      handler: 'getAllCartProducts.handler',   
+      environment: {
+        TABLE_NAME_PRODUCTS: table.tableName,
+      }             
+    });
+
+    // defines an AWS Lambda resourse to put products in the cart
+    const putProductsLambda = new lambda.Function(this, 'putProductHandler', {
+      runtime: lambda.Runtime.NODEJS_16_X,    
+      code: lambda.Code.fromAsset('lambda'),  
+      handler: 'putProduct.handler',   
+      environment: {
+        TABLE_NAME_PRODUCTS: table.tableName,
+      }             
+    });
+
     // API gateway
+
+    // root
     const api = new apigateway.RestApi(this, 'APIGateway');
+
+    // cart
+    const cartProductsResource = api.root.addResource('cart');
+
     // Conect API gateway with the lambda
-    api.root.addMethod('ANY', new apigateway.LambdaIntegration(getAllProductsLambda));
+    api.root.addMethod('GET', new apigateway.LambdaIntegration(getAllProductsLambda));
+    cartProductsResource.addMethod('GET', new apigateway.LambdaIntegration(getUserCartProductsLambda));
+    cartProductsResource.addMethod('POST', new apigateway.LambdaIntegration(putProductsLambda));
+
     // enable CORS for API Gateway REST API
     // allow CORS for all origins
     api.root.addCorsPreflight({
@@ -64,12 +93,18 @@ export class APIStack extends Stack {
         allowHeaders: ['Content-Type', 'Authorization', 'X-Amz-Date', 'X-Api-Key', 'X-Amz-Security-Token', 'X-Amz-User-Agent'],
         allowCredentials: true,
     })
+    
+    cartProductsResource.addCorsPreflight({
+        allowOrigins: ['*'],
+        allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowHeaders: ['Content-Type', 'Authorization', 'X-Amz-Date', 'X-Api-Key', 'X-Amz-Security-Token', 'X-Amz-User-Agent'],
+        allowCredentials: true,
+    })
   
-
-    // productsResource.addMethod('GET', new apigateway.LambdaIntegration(getAllProductsLambda));
-
     // grant the lambda role read/write permissions to our table
     table.grantFullAccess(getAllProductsLambda);
+    table.grantFullAccess(getUserCartProductsLambda);
+    table.grantFullAccess(putProductsLambda);
     
   }
 }   
