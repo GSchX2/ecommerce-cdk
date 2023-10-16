@@ -1,9 +1,4 @@
-import * as s3 from 'aws-cdk-lib/aws-s3';
-import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
-import * as cloudfront_origins from 'aws-cdk-lib/aws-cloudfront-origins';
-import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
-import { BlockPublicAccess, BucketAccessControl } from 'aws-cdk-lib/aws-s3';
-import { CfnOutput, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
+import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
@@ -74,7 +69,7 @@ export class APIStack extends Stack {
     // productsResource.addMethod('GET', new apigateway.LambdaIntegration(getAllProductsLambda));
 
     // grant the lambda role read/write permissions to our table
-    table.grantReadWriteData(getAllProductsLambda);
+    table.grantFullAccess(getAllProductsLambda);
     
   }
 }   

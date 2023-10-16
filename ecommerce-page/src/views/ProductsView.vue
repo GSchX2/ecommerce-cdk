@@ -30,7 +30,7 @@ export default {
   },
 
   mounted() {
-    fetch('https://ibsl5ewok3.execute-api.us-east-1.amazonaws.com/prod')
+    fetch('https://fgvkzh926b.execute-api.us-east-1.amazonaws.com/prod')
       .then(response => response.json())
       .then(res => this.products = res.products);
   },
